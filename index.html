@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Coding Challenges</title>
+  <script src="lib/codemirror.js"></script>
+  <script src="mode/python/python.js"></script>
+  <script src="jquery.js"></script>
+  <link rel="stylesheet" href="/lib/bootstrap.css">
+  <link rel="stylesheet" href="/lib/codemirror.css">
+  <link rel="stylesheet" href="/lib/ambiance.css">
+  <style>
+    .error{
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <h1>learndirect code challenges</h1>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="editor"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="form-group">
+          <button id="run_code" class="btn btn-primary form-control">Run code</button>
+          <select id="lang" class="form-control">
+            <option value="node">Javascript</option>
+            <option value="php">PHP</option>
+            <option value="python">Python</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+          <div class="output"></div>
+      </div>
+    </div>
+  </div>
+
+
+
+      <script>
+        var editor = CodeMirror(document.querySelector(".editor"));
+
+          editor.setOption("theme", "ambiance");
+        $("#run_code").on("click", function(){
+          var code = encodeURIComponent(editor.getValue());
+          var lang = $('#lang').val();
+          $.ajax('/run.php?lang=' + lang + '&code=' + code)
+          .done(function(data){
+            if(data.status == "error"){
+              $('.output').addClass("error");
+            } else{
+              $('.output').removeClass("error");
+            }
+            $('.output').html(data.response)
+            console.log(data);
+          })
+          .error(function(data){
+            $('.output').html(data);
+          })
+          .always(function(){
+            console.log("AJAX Done.");
+    })
+        });
+      </script>
+</body>
+</html>
