@@ -48,20 +48,32 @@
 
       <script>
         var editor = CodeMirror(document.querySelector(".editor"));
+        editor.setOption("theme", "ambiance");
+        var $output = $('.output');
 
-          editor.setOption("theme", "ambiance");
+        var testOutput = function(){
+          var expected = ("Hello World!").toLowerCase(); // Mockup test
+          var result = $.trim($output.text()).toLowerCase();
+
+          if (expected === result){
+            alert("Correct!");
+          }
+        }
+
         $("#run_code").on("click", function(){
           var code = encodeURIComponent(editor.getValue());
           var lang = $('#lang').val();
           $.ajax('/run.php?lang=' + lang + '&code=' + code)
           .done(function(data){
             if(data.status == "error"){
-              $('.output').addClass("error");
+              $output.addClass("error");
             } else{
-              $('.output').removeClass("error");
+              $output.removeClass("error");
             }
-            $('.output').html(data.response)
-            console.log(data);
+            $output.html(data.response)
+
+            testOutput();
+
           })
           .error(function(data){
             $('.output').html(data);
